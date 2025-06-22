@@ -1,0 +1,18 @@
+# تجاهل ملفات إعدادات Google
+credentials.json
+
+# تجاهل ملف البيئة (الذي قد يحتوي على كلمات سر)
+.env
+
+# ملفات Python الإضافية
+__pycache__/
+*.pyc
+*.pyo
+
+# ملفات VS Code
+.vscode/
+
+# مجلدات نظام
+.DS_Store
+Thumbs.db
+
