@@ -1,18 +1,29 @@
 from flask import Flask, render_template
 import gspread
+import os
+import json
 from oauth2client.service_account import ServiceAccountCredentials
 
 app = Flask(__name__)
 
+# نطاقات الوصول
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
+
+# قراءة بيانات الاعتماد من متغير البيئة
+creds_json = os.getenv("GOOGLE_CREDENTIALS")
+creds_dict = json.loads(creds_json)
+creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+
+# ربط gspread
 client = gspread.authorize(creds)
-sheet = client.open_by_key("1lWcY4kMNvP6R4i3R7sk-11GufkW6TXVOB3fP3I-mMno").sheet1
+
+# فتح الشيت باستخدام ID مباشرة (بدون الحاجة لتحديده داخل الكود)
+sheet = client.open_by_key(os.getenv("SHEET_ID")).worksheet(os.getenv("TAB_NAME"))
 
 @app.route("/")
 def index():
     messages = sheet.col_values(1)
-    message = messages[1] if len(messages) > 1 else "لا توجد رسائل حالياً."
+    message = messages[1] if len(messages) > 1 else "وحده، رسائل، تجريب."
     return render_template("index.html", message=message)
 
 if __name__ == "__main__":
